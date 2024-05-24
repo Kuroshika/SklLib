@@ -1,0 +1,74 @@
+debug: False
+
+output_path:
+pretrained_model:
+device_id: [ 0,1 ]
+cuda_visible_device: '0,1'
+
+# loss_function
+loss: 'cross_entropy'
+
+data_param:
+  type: "NTU60"
+  class_num: 60
+  batch_size: 64
+  workers: 0
+  pin_memory: False
+  drop_last: False
+  dataset_mode: [ "train", "val" ]
+
+  train_data_param:
+    data_path: /home/cv-ar/datasets/NTU60_skeleton/cs_train_data.npy
+    label_path: /home/cv-ar/datasets/NTU60_skeleton/cs_train_label.pkl
+    random_choose: True
+    center_choose: False
+    window_size: 75
+    final_size: 64
+    num_skip_frame:
+    decouple_spatial: False
+  val_data_param:
+    data_path: /home/cv-ar/datasets/NTU60_skeleton/cs_val_data.npy
+    label_path: /home/cv-ar/datasets/NTU60_skeleton/cs_val_label.pkl
+    random_choose: False
+    center_choose: True
+    window_size: 75
+    final_size: 64
+    num_skip_frame:
+    decouple_spatial: False
+
+# model_param is for build_model
+model_param:
+  type: 'STGCN'
+  in_channels: 3
+  base_channels: 64
+  data_bn_type: "VC"
+  ch_ratio: 2
+  num_person: 2
+  num_stages: 10
+  inflate_stages: [ 5,8 ]
+  down_stages: [ 5,8 ]
+  graph_cfg:
+    layout: 'nturgb+d'
+
+# head_param is for build_head
+head_param:
+  type: 'GCNHead'
+  num_classes: 60
+  in_channels: 256
+
+# optimizer_param is for build_optimizer
+optimizer_param:
+  optim_type: 'adam'
+  lr: 0.01
+  wd: 0
+
+# training_param is for class TrainingEngine
+training_param:
+  dataloader_datatype: 'N1TW'
+  model_datatype: 'N1T3S'
+  max_epoch: 100
+  val_frequency: 1
+  save_frequency: 1
+
+
+
